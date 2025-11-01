@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Token Environmental Impact Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .result-card {
+            border-left: 4px solid #667eea;
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0.375rem;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .equivalency-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: white;
+            border-radius: 0.375rem;
+            border: 1px solid #dee2e6;
+        }
+        .token-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .hero-section .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            .hero-section .btn {
+                margin-top: 1rem;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-4">🌱 AI Token Environmental Impact Calculator</h1>
+                    <p class="small">Based on methodology from MIT "From Words to Watts" research and Google's comprehensive AI environmental impact study</p>
+                </div>
+                <button type="button" class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#methodologyModal">
+                    📖 Methodology & Citations
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Methodology Modal -->
+    <div class="modal fade" id="methodologyModal" tabindex="-1" aria-labelledby="methodologyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="methodologyModalLabel">📖 Methodology & Citations</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Core Methodology</h5>
+                    <p>This calculator uses peer-reviewed research and industry standards to estimate the environmental impact of AI token processing.</p>
+                    
+                    <h6 class="mt-4">1. Energy Consumption</h6>
+                    <p><strong>Base Factor:</strong> 0.00000106 kWh per token</p>
+                    <p><strong>Formula:</strong> Energy (kWh) = Tokens × Base_Energy_Factor × Model_Factor × Hardware_Factor × PUE_Factor</p>
+                    <p><strong>Source:</strong> MIT "From Words to Watts" paper (arXiv:2310.03003)</p>
+                    <ul>
+                        <li><strong>Paper:</strong> "From Words to Watts: Benchmarking the Energy Costs of Large Language Model Inference"</li>
+                        <li><strong>Authors:</strong> Siddharth Samsi, Dan Zhao, et al. (MIT Lincoln Laboratory)</li>
+                        <li><strong>Link:</strong> <a href="https://arxiv.org/abs/2310.03003" target="_blank">https://arxiv.org/abs/2310.03003</a></li>
+                    </ul>
+
+                    <h6 class="mt-4">2. Carbon Emissions</h6>
+                    <p><strong>Carbon Intensity:</strong> 0.367 kg CO₂ per kWh (location-based, US average)</p>
+                    <p><strong>Formula:</strong> CO₂ (kg) = Energy (kWh) × Carbon_Intensity_Factor</p>
+                    <p><strong>Source:</strong> U.S. Energy Information Administration (EIA) 2023 data</p>
+                    <ul>
+                        <li><strong>Link:</strong> <a href="https://www.eia.gov/tools/faqs/faq.php?id=74&t=11" target="_blank">https://www.eia.gov/tools/faqs/faq.php?id=74&t=11</a></li>
+                        <li><strong>Note:</strong> Carbon intensity varies by region and accounting method (location-based vs. market-based)</li>
+                    </ul>
+
+                    <h6 class="mt-4">3. Water Usage</h6>
+                    <p><strong>Base Factor:</strong> 0.0000026 L per token</p>
+                    <p><strong>Formula:</strong> Water (L) = Tokens × Base_Water_Factor × Model_Factor × Hardware_Factor</p>
+                    <p><strong>Source:</strong> Google's comprehensive AI environmental impact study</p>
+                    <ul>
+                        <li><strong>Paper:</strong> "Measuring the environmental impact of delivering AI at Google Scale"</li>
+                        <li><strong>Link:</strong> <a href="https://arxiv.org/html/2508.15734v1" target="_blank">https://arxiv.org/html/2508.15734v1</a></li>
+                    </ul>
+
+                    <h6 class="mt-4">Provider-Specific Factors</h6>
+                    <ul>
+                        <li><strong>PUE (Power Usage Effectiveness):</strong>
+                            <ul>
+                                <li>Google/Gemini: 1.09</li>
+                                <li>OpenAI/Anthropic: 1.15</li>
+                                <li>Industry Average: 1.56</li>
+                            </ul>
+                        </li>
+                        <li><strong>Market-Based Carbon Accounting:</strong>
+                            <ul>
+                                <li>Google/Gemini: 0.0 kg CO₂/kWh (carbon neutral since 2007)</li>
+                                <li>OpenAI/Anthropic: 0.30 kg CO₂/kWh (working toward carbon neutrality)</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h6 class="mt-4">Model-Specific Factors</h6>
+                    <p>Energy efficiency multipliers based on actual measurements from Devera.ai study and API pricing ratios.</p>
+                    <p><strong>Source:</strong> "The Environmental Impact of AI: Energy, Carbon, and Water in the Age of ChatGPT" by Devera.ai (2024)</p>
+
+                    <h6 class="mt-4">Complete References</h6>
+                    <ol>
+                        <li>Samsi, S., et al. (2023). "From Words to Watts: Benchmarking the Energy Costs of Large Language Model Inference." <a href="https://arxiv.org/abs/2310.03003" target="_blank">arXiv:2310.03003</a></li>
+                        <li>Google Research (2024). "Measuring the environmental impact of delivering AI at Google Scale." <a href="https://arxiv.org/html/2508.15734v1" target="_blank">arXiv:2508.15734v1</a></li>
+                        <li>Devera.ai (2024). "The Environmental Impact of AI: Energy, Carbon, and Water in the Age of ChatGPT"</li>
+                        <li>U.S. Energy Information Administration (2023). "How much carbon dioxide is produced per kilowatthour of U.S. electricity generation?" <a href="https://www.eia.gov/tools/faqs/faq.php?id=74&t=11" target="_blank">EIA FAQ</a></li>
+                        <li>Google Data Center Efficiency Reports (2024)</li>
+                        <li>Microsoft Azure Sustainability Reports (2024)</li>
+                        <li>Uptime Institute Global Data Center Survey (2024)</li>
+                        <li>EPA Greenhouse Gas Equivalencies Calculator</li>
+                        <li>Real World Visuals Energy Converter</li>
+                    </ol>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">📝 Input Text</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="textInput" class="form-label">Enter your text:</label>
+                            <div class="mb-2">
+                                <small class="text-muted">Try a sample text:</small>
+                                <div class="btn-group btn-group-sm mt-1" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="loadSampleText('greatExpectations')">📚 Great Expectations</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="loadSampleText('medium')">📄 Medium Text</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="loadSampleText('quickFox')">🦊 Quick Fox</button>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="textInput" rows="8" placeholder="Paste your text here..."></textarea>
+                            <div class="token-count" id="tokenCount">Estimated tokens: 0</div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="providerSelect" class="form-label">Provider:</label>
+                                <select class="form-select" id="providerSelect">
+                                    <option value="openai">OpenAI</option>
+                                    <option value="anthropic">Anthropic</option>
+                                    <option value="gemini">Google Gemini</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="modelSelect" class="form-label">Model:</label>
+                                <select class="form-select" id="modelSelect">
+                                    <!-- OpenAI Models -->
+                                    <option value="gpt-4o" data-provider="openai">GPT-4o</option>
+                                    <option value="gpt-4" data-provider="openai">GPT-4</option>
+                                    <option value="gpt-4-turbo" data-provider="openai">GPT-4 Turbo</option>
+                                    <option value="gpt-3.5-turbo" data-provider="openai">GPT-3.5 Turbo</option>
+                                    <option value="gpt-4o-mini" data-provider="openai">GPT-4o Mini</option>
+                                    
+                                    <!-- Anthropic Models -->
+                                    <option value="claude-3-opus" data-provider="anthropic">Claude 3 Opus</option>
+                                    <option value="claude-opus-4" data-provider="anthropic">Claude Opus 4</option>
+                                    <option value="claude-sonnet-4" data-provider="anthropic">Claude Sonnet 4</option>
+                                    <option value="claude-3-sonnet" data-provider="anthropic">Claude 3 Sonnet</option>
+                                    <option value="claude-3-haiku" data-provider="anthropic">Claude 3 Haiku</option>
+                                    
+                                    <!-- Google Models -->
+                                    <option value="gemini-2.5-pro" data-provider="gemini">Gemini 2.5 Pro</option>
+                                    <option value="gemini-2.5-flash" data-provider="gemini">Gemini 2.5 Flash</option>
+                                    <option value="gemini-1.5-pro" data-provider="gemini">Gemini 1.5 Pro</option>
+                                    <option value="gemini-1.5-flash" data-provider="gemini">Gemini 1.5 Flash</option>
+                                    <option value="gemini-1.0-pro" data-provider="gemini">Gemini 1.0 Pro</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="hardwareSelect" class="form-label">Hardware:</label>
+                                <select class="form-select" id="hardwareSelect">
+                                    <option value="h100">NVIDIA H100 (Baseline)</option>
+                                    <option value="a100">NVIDIA A100</option>
+                                    <option value="v100">NVIDIA V100</option>
+                                    <option value="t4">NVIDIA T4</option>
+                                    <option value="tpu">Google TPU</option>
+                                    <option value="inferentia">AWS Inferentia</option>
+                                    <option value="rtx4090">RTX 4090</option>
+                                    <option value="cpu_intel">Intel CPU</option>
+                                    <option value="cpu_amd">AMD CPU</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="regionSelect" class="form-label">Region:</label>
+                                <select class="form-select" id="regionSelect">
+                                    <option value="default">Default (US Average)</option>
+                                    <option value="us-east">US East (Virginia/Ohio)</option>
+                                    <option value="us-west">US West (Oregon/Washington)</option>
+                                    <option value="us-texas">US Texas (ERCOT)</option>
+                                    <option value="us-ny">US New York (Upstate)</option>
+                                    <option value="europe">Europe (EU-27 Average)</option>
+                                    <option value="europe-high">Europe High (Germany/Netherlands)</option>
+                                    <option value="europe-low">Europe Low (Sweden/France)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Carbon Accounting Method:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="accountingMethod" id="locationBased" value="location" checked>
+                                    <label class="form-check-label" for="locationBased">
+                                        Location-Based (Actual Grid Emissions)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="accountingMethod" id="marketBased" value="market">
+                                    <label class="form-check-label" for="marketBased">
+                                        Market-Based (With Carbon Credits/Renewable Energy)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button class="btn btn-primary btn-lg w-100" onclick="calculateImpact()">
+                                    🧮 Calculate Environmental Impact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" id="resultsSection" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">📊 Results</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="result-card">
+                            <h5>⚡ Energy Consumption</h5>
+                            <div class="metric-value" id="energyValue">0 kWh</div>
+                            <div class="token-count">Based on MIT "From Words to Watts" methodology</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h5>🌍 Carbon Emissions (CO₂)</h5>
+                            <div class="metric-value" id="co2Value">0 kg</div>
+                            <div class="token-count" id="co2Note">Using location-based accounting</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h5>💧 Water Usage</h5>
+                            <div class="metric-value" id="waterValue">0 L</div>
+                            <div class="token-count">Based on Google's comprehensive AI environmental impact study</div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5>🌎 Real-World Equivalencies</h5>
+                            <div id="equivalencies"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="great_expectations.js"></script>
+    <script>
+        // Base calculation factors from METHODOLOGY.md
+        const BASE_ENERGY_FACTOR = 0.00000106;  // kWh per token (MIT paper)
+        const BASE_WATER_FACTOR = 0.0000026;    // L per token (Google study)
+
+        // PUE factors by provider
+        const PUE_FACTORS = {
+            "google": 1.09,
+            "gemini": 1.09,
+            "openai": 1.15,
+            "anthropic": 1.15,
+            "default": 1.56
+        };
+
+        // Carbon intensity by region (location-based, kg CO2/kWh)
+        const CARBON_INTENSITY = {
+            "us-east": 0.375,
+            "us-west": 0.250,
+            "us-texas": 0.375,
+            "us-ny": 0.138,
+            "europe": 0.207,
+            "europe-high": 0.360,
+            "europe-low": 0.075,
+            "default": 0.367  // EIA 2023 US average
+        };
+
+        // Market-based carbon intensity (with carbon credits, kg CO2/kWh)
+        const MARKET_CARBON_INTENSITY = {
+            "google": 0.0,
+            "gemini": 0.0,
+            "openai": 0.30,
+            "anthropic": 0.30,
+            "default": 0.40
+        };
+
+        // Model-specific factors
+        const MODEL_FACTORS = {
+            // OpenAI
+            "gpt-4o": {energy: 0.5, co2: 0.5, water: 0.5},
+            "gpt-4": {energy: 1.1, co2: 1.1, water: 1.1},
+            "gpt-4-turbo": {energy: 0.8, co2: 0.8, water: 0.8},
+            "gpt-3.5-turbo": {energy: 0.2, co2: 0.2, water: 0.2},
+            "gpt-4o-mini": {energy: 0.1, co2: 0.1, water: 0.1},
+            
+            // Anthropic
+            "claude-3-opus": {energy: 2.7, co2: 2.7, water: 2.7},
+            "claude-opus-4": {energy: 2.7, co2: 2.7, water: 2.7},
+            "claude-sonnet-4": {energy: 0.9, co2: 0.9, water: 0.9},
+            "claude-3-sonnet": {energy: 0.8, co2: 0.8, water: 0.8},
+            "claude-3-haiku": {energy: 0.2, co2: 0.2, water: 0.2},
+            
+            // Google
+            "gemini-2.5-pro": {energy: 0.5, co2: 0.5, water: 0.5},
+            "gemini-2.5-flash": {energy: 0.2, co2: 0.2, water: 0.2},  // Flash variant - very efficient
+            "gemini-1.5-pro": {energy: 0.5, co2: 0.5, water: 0.5},
+            "gemini-1.5-flash": {energy: 0.2, co2: 0.2, water: 0.2},  // Flash variant - very efficient
+            "gemini-1.0-pro": {energy: 0.4, co2: 0.4, water: 0.4}
+        };
+
+        // Hardware-specific factors
+        const HARDWARE_FACTORS = {
+            "h100": {energy: 1.0, co2: 1.0, water: 1.0},
+            "a100": {energy: 1.1, co2: 1.1, water: 1.1},
+            "v100": {energy: 1.3, co2: 1.3, water: 1.3},
+            "t4": {energy: 0.8, co2: 0.8, water: 0.8},
+            "tpu": {energy: 0.7, co2: 0.7, water: 0.7},
+            "inferentia": {energy: 0.8, co2: 0.8, water: 0.8},
+            "rtx4090": {energy: 0.9, co2: 0.9, water: 0.9},
+            "cpu_intel": {energy: 0.6, co2: 0.6, water: 0.6},
+            "cpu_amd": {energy: 0.5, co2: 0.5, water: 0.5}
+        };
+
+        // Real-world equivalency factors
+        const EQUIVALENCY_FACTORS = {
+            "miles_driven": {description: "Miles Driven (avg car)", co2_per_unit: 0.393, unit: "miles"},
+            "flights_nyc_la": {description: "Flights NYC to LA", co2_per_unit: 900.0, unit: "flights"},
+            "flights_nyc_london": {description: "Flights NYC to London", co2_per_unit: 1200.0, unit: "flights"},
+            "household_electricity": {description: "Household Electricity (avg US home/year)", kwh_per_unit: 10500.0, unit: "years"},
+            "household_electricity_days": {description: "Household Electricity (avg US home/day)", kwh_per_unit: 28.8, unit: "days"},
+            "household_electricity_hours": {description: "Household Electricity (avg US home/hour)", kwh_per_unit: 1.2, unit: "hours"},
+            "smartphone_charges": {description: "Smartphone Charges", co2_per_unit: 0.008, unit: "charges"},
+            "laptop_charges": {description: "Laptop Charges", co2_per_unit: 0.050, unit: "charges"},
+            "tv_watching_hours": {description: "TV Watching (LED TV)", kwh_per_unit: 0.1, unit: "hours"},
+            "gaming_hours": {description: "Gaming (Gaming PC)", kwh_per_unit: 0.3, unit: "hours"},
+            "hamburgers": {description: "Hamburgers", co2_per_unit: 2.5, unit: "burgers"},
+            "coffee_cups": {description: "Coffee Cups", co2_per_unit: 0.2, unit: "cups"},
+            "beer_bottles": {description: "Beer Bottles", co2_per_unit: 0.3, unit: "bottles"},
+            "water_bottles": {description: "Plastic Water Bottles", liters_per_unit: 0.5, unit: "bottles"},
+            "showers": {description: "Showers (avg 8 minutes)", liters_per_unit: 60.0, unit: "showers"},
+            "bathtubs": {description: "Bathtubs", liters_per_unit: 150.0, unit: "baths"},
+            "urban_tree_sequestration": {description: "Urban Tree Sequestration", co2_per_unit: 60.0, unit: "years"},
+            "tree_planting": {description: "Tree Planting (mature tree)", co2_per_unit: 22.0, unit: "trees"},
+            "solar_panel_hours": {description: "Solar Panel Output (1kW panel)", kwh_per_unit: 1.0, unit: "hours"},
+            "steel_production": {description: "Steel Production", co2_per_unit: 1800.0, unit: "tons"},
+            "cement_production": {description: "Cement Production", co2_per_unit: 900.0, unit: "tons"}
+        };
+
+        // Medium-sized text sample
+        const MEDIUM_TEXT = `Artificial intelligence has revolutionized the way we interact with technology, transforming everything from how we search for information to how we create content. Machine learning algorithms can now understand natural language, recognize images, and even generate creative works that were once thought to be exclusively human domains. The development of large language models like GPT-4, Claude, and Gemini represents a significant leap forward in computational capabilities, enabling machines to comprehend context, engage in complex reasoning, and produce responses that feel remarkably human-like.
+
+However, this remarkable progress comes with environmental costs that are increasingly coming under scrutiny. Training and running these sophisticated AI models requires enormous computational resources, consuming vast amounts of electricity generated from power grids that may rely on fossil fuels. Each query processed, each token generated, represents a tiny but cumulative environmental footprint that includes energy consumption, carbon emissions, and water usage for data center cooling systems.
+
+Understanding these impacts is crucial for making informed decisions about AI usage. By quantifying the environmental cost of processing text through AI systems, we can better appreciate the trade-offs involved and work towards more sustainable AI development. This calculator helps you see the real-world environmental implications of your AI text processing, from the energy consumed to the equivalent miles driven or trees needed to offset the carbon emissions.`;
+
+        // Sample text loading function
+        function loadSampleText(type) {
+            const textarea = document.getElementById('textInput');
+            let text = '';
+            
+            if (type === 'greatExpectations') {
+                // Load from great_expectations.js (assumes it's already loaded)
+                if (typeof great_expectations !== 'undefined') {
+                    text = great_expectations;
+                } else {
+                    alert('Great Expectations text is loading. Please try again in a moment.');
+                    return;
+                }
+            } else if (type === 'medium') {
+                text = MEDIUM_TEXT;
+            } else if (type === 'quickFox') {
+                text = 'The quick brown fox jumps over the lazy dog.';
+            }
+            
+            textarea.value = text;
+            // Trigger input event to update token count
+            textarea.dispatchEvent(new Event('input'));
+        }
+
+        // Estimate tokens from text (approximation: ~4 characters per token for English)
+        function estimateTokens(text) {
+            if (!text || text.trim().length === 0) return 0;
+            // Rough approximation: 1 token ≈ 4 characters
+            return Math.ceil(text.length / 4);
+        }
+
+        // Update token count as user types
+        document.getElementById('textInput').addEventListener('input', function() {
+            const text = this.value;
+            const tokens = estimateTokens(text);
+            document.getElementById('tokenCount').textContent = `Estimated tokens: ${tokens.toLocaleString()}`;
+        });
+
+        // Filter models by provider and auto-select hardware
+        document.getElementById('providerSelect').addEventListener('change', function() {
+            const provider = this.value;
+            const modelSelect = document.getElementById('modelSelect');
+            const hardwareSelect = document.getElementById('hardwareSelect');
+            const options = modelSelect.querySelectorAll('option');
+            
+            // Filter models by provider
+            options.forEach(option => {
+                if (option.dataset.provider === provider) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            
+            // Select first visible model option
+            const firstVisible = Array.from(options).find(opt => opt.style.display !== 'none');
+            if (firstVisible) {
+                modelSelect.value = firstVisible.value;
+            }
+            
+            // Auto-select hardware based on provider
+            // Google/Gemini uses TPUs, OpenAI/Anthropic use H100s
+            if (provider === 'gemini' || provider === 'google') {
+                hardwareSelect.value = 'tpu';
+            } else if (provider === 'openai' || provider === 'anthropic') {
+                hardwareSelect.value = 'h100';
+            }
+        });
+
+        function calculateImpact() {
+            const text = document.getElementById('textInput').value;
+            if (!text || text.trim().length === 0) {
+                alert('Please enter some text to calculate impact.');
+                return;
+            }
+
+            const tokens = estimateTokens(text);
+            const provider = document.getElementById('providerSelect').value;
+            const model = document.getElementById('modelSelect').value;
+            const hardware = document.getElementById('hardwareSelect').value;
+            const region = document.getElementById('regionSelect').value;
+            const accountingMethod = document.querySelector('input[name="accountingMethod"]:checked').value;
+
+            // Get factors
+            const modelFactors = MODEL_FACTORS[model] || {energy: 0.6, co2: 0.6, water: 0.6};
+            const hardwareFactors = HARDWARE_FACTORS[hardware] || HARDWARE_FACTORS.h100;
+            const pue = PUE_FACTORS[provider] || PUE_FACTORS.default;
+
+            // Calculate energy (with PUE)
+            const energy_kwh = tokens * BASE_ENERGY_FACTOR * modelFactors.energy * hardwareFactors.energy * pue;
+
+            // Calculate CO2 based on accounting method
+            let carbonIntensity;
+            if (accountingMethod === 'market') {
+                // Use explicit undefined check since 0.0 is falsy but valid
+                carbonIntensity = (MARKET_CARBON_INTENSITY[provider] !== undefined) 
+                    ? MARKET_CARBON_INTENSITY[provider] 
+                    : MARKET_CARBON_INTENSITY.default;
+            } else {
+                carbonIntensity = (CARBON_INTENSITY[region] !== undefined)
+                    ? CARBON_INTENSITY[region]
+                    : CARBON_INTENSITY.default;
+            }
+            const co2_kg = energy_kwh * carbonIntensity;
+
+            // Calculate water
+            const water_liters = tokens * BASE_WATER_FACTOR * modelFactors.water * hardwareFactors.water;
+
+            // Display results
+            document.getElementById('energyValue').textContent = `${energy_kwh.toFixed(6)} kWh`;
+            document.getElementById('co2Value').textContent = `${co2_kg.toFixed(6)} kg`;
+            document.getElementById('co2Note').textContent = accountingMethod === 'market' 
+                ? 'Using market-based accounting (with carbon credits)' 
+                : `Using location-based accounting (${region})`;
+            document.getElementById('waterValue').textContent = `${water_liters.toFixed(6)} L`;
+
+            // Calculate equivalencies
+            const equivalencies = calculateEquivalencies(energy_kwh, co2_kg, water_liters);
+            displayEquivalencies(equivalencies);
+
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function calculateEquivalencies(energy_kwh, co2_kg, water_liters) {
+            const equivalencies = [];
+            
+            for (const [key, factor] of Object.entries(EQUIVALENCY_FACTORS)) {
+                let value = null;
+                
+                if (factor.co2_per_unit) {
+                    if (factor.co2_per_unit > 0) {
+                        value = co2_kg / factor.co2_per_unit;
+                    }
+                } else if (factor.kwh_per_unit) {
+                    value = energy_kwh / factor.kwh_per_unit;
+                } else if (factor.liters_per_unit) {
+                    value = water_liters / factor.liters_per_unit;
+                }
+                
+                if (value !== null && value !== Infinity && value > 0) {
+                    equivalencies.push({
+                        description: factor.description,
+                        value: value,
+                        unit: factor.unit
+                    });
+                }
+            }
+            
+            return equivalencies.sort((a, b) => b.value - a.value); // Sort by value descending
+        }
+
+        function displayEquivalencies(equivalencies) {
+            const container = document.getElementById('equivalencies');
+            container.innerHTML = '';
+            
+            if (equivalencies.length === 0) {
+                container.innerHTML = '<p class="text-muted">No equivalencies available for these values.</p>';
+                return;
+            }
+
+            equivalencies.forEach(eq => {
+                let formattedValue;
+                if (eq.value < 0.0001) {
+                    formattedValue = eq.value.toFixed(8); // Very small numbers: show up to 8 decimal places
+                } else if (eq.value < 0.001) {
+                    formattedValue = eq.value.toFixed(6); // Small numbers: show 6 decimal places
+                } else if (eq.value < 0.1) {
+                    formattedValue = eq.value.toFixed(4); // Medium-small: show 4 decimal places
+                } else if (eq.value < 1) {
+                    formattedValue = eq.value.toFixed(3); // Fractional: show 3 decimal places
+                } else {
+                    formattedValue = eq.value.toLocaleString('en-US', {maximumFractionDigits: 1}); // Large: show 1 decimal place
+                }
+
+                const div = document.createElement('div');
+                div.className = 'equivalency-item';
+                div.innerHTML = `
+                    <strong>${formattedValue} ${eq.unit}</strong>
+                    <div class="small text-muted">${eq.description}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Initialize model filtering
+        document.getElementById('providerSelect').dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
