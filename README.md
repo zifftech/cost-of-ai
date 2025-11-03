@@ -58,19 +58,46 @@ A web-based calculator is available at `src/ui/index.html`. Open this file in a 
 
 The interface uses the same calculation methodology as the CLI and runs entirely client-side.
 
-## Supported Data Formats
+## LLM Provider Reports
 
 ### Anthropic (Claude API)
+
+**File Format:**
 - Files: `claude_api_tokens_*.csv`
 - Columns: `usage_date_utc`, `model_version`, `usage_input_tokens_*`, `usage_output_tokens`
 
+**How to Download:**
+- Log in to your Anthropic account at console.anthropic.com
+- Navigate to the Usage or Billing section
+- Select the desired date range
+- Export usage data as CSV
+- Files should be named with pattern `claude_api_tokens_YYYY_MM.csv`
+
 ### Gemini (Google AI)
+
+**File Format:**
 - Files: `ZD-INC_Cost table, *.csv`
 - Columns: `Date`, `SKU Description`, `Credits`
 
+**How to Download:**
+- Log in to Google Cloud Console
+- Navigate to Billing > Cost table reports
+- Select your billing account and the date range
+- Export the cost table as CSV
+- Files are typically named `ZD-INC_Cost table, YYYY-MM-DD — YYYY-MM-DD.csv`
+
 ### OpenAI (GPT API)
+
+**File Format:**
 - Files: `completions_usage_*.csv`
 - Columns: `date`, `model`, `prompt_tokens`, `completion_tokens`
+
+**How to Download:**
+- Log in to your OpenAI account at platform.openai.com
+- Navigate to Usage or Billing section
+- Select the billing period (monthly)
+- Export usage data as CSV
+- Files should be named with pattern `completions_usage_YYYY-MM-DD_YYYY-MM-DD.csv`
 
 ## Model Mapping
 
