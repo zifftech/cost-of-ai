@@ -3,7 +3,7 @@
 Token Impact Estimation System
 
 Calculate environmental impact (kWh, CO₂, Water) of AI token usage
-using Playwright automation with tokenomy.ai
+using peer-reviewed research methodologies (MIT and Google studies)
 """
 
 import sys

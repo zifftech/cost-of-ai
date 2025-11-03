@@ -284,6 +284,15 @@
 
                         <div class="mt-4">
                             <h5>🌎 Real-World Equivalencies</h5>
+                            <div class="alert alert-info small mb-3" role="alert">
+                                <strong>Note:</strong> Equivalencies are grouped by metric type:
+                                <ul class="mb-0 mt-2">
+                                    <li><strong>CO₂-based</strong> (smartphone charges, coffee cups, miles driven) - compare your carbon emissions</li>
+                                    <li><strong>Energy-based</strong> (household electricity, TV watching) - compare your energy consumption</li>
+                                    <li><strong>Water-based</strong> (showers, water bottles) - compare your water usage</li>
+                                </ul>
+                                These metrics are independent - CO₂ comes from electricity generation, while water comes from data center cooling systems.
+                            </div>
                             <div id="equivalencies"></div>
                         </div>
                     </div>
@@ -367,28 +376,30 @@
         };
 
         // Real-world equivalency factors
+        // Note: min_display threshold filters out confusing fractional values (e.g., "0.267 burgers")
         const EQUIVALENCY_FACTORS = {
-            "miles_driven": {description: "Miles Driven (avg car)", co2_per_unit: 0.393, unit: "miles"},
-            "flights_nyc_la": {description: "Flights NYC to LA", co2_per_unit: 900.0, unit: "flights"},
-            "flights_nyc_london": {description: "Flights NYC to London", co2_per_unit: 1200.0, unit: "flights"},
-            "household_electricity": {description: "Household Electricity (avg US home/year)", kwh_per_unit: 10500.0, unit: "years"},
-            "household_electricity_days": {description: "Household Electricity (avg US home/day)", kwh_per_unit: 28.8, unit: "days"},
-            "household_electricity_hours": {description: "Household Electricity (avg US home/hour)", kwh_per_unit: 1.2, unit: "hours"},
-            "smartphone_charges": {description: "Smartphone Charges", co2_per_unit: 0.008, unit: "charges"},
-            "laptop_charges": {description: "Laptop Charges", co2_per_unit: 0.050, unit: "charges"},
-            "tv_watching_hours": {description: "TV Watching (LED TV)", kwh_per_unit: 0.1, unit: "hours"},
-            "gaming_hours": {description: "Gaming (Gaming PC)", kwh_per_unit: 0.3, unit: "hours"},
-            "hamburgers": {description: "Hamburgers", co2_per_unit: 2.5, unit: "burgers"},
-            "coffee_cups": {description: "Coffee Cups", co2_per_unit: 0.2, unit: "cups"},
-            "beer_bottles": {description: "Beer Bottles", co2_per_unit: 0.3, unit: "bottles"},
-            "water_bottles": {description: "Plastic Water Bottles", liters_per_unit: 0.5, unit: "bottles"},
-            "showers": {description: "Showers (avg 8 minutes)", liters_per_unit: 60.0, unit: "showers"},
-            "bathtubs": {description: "Bathtubs", liters_per_unit: 150.0, unit: "baths"},
-            "urban_tree_sequestration": {description: "Urban Tree Sequestration", co2_per_unit: 60.0, unit: "years"},
-            "tree_planting": {description: "Tree Planting (mature tree)", co2_per_unit: 22.0, unit: "trees"},
-            "solar_panel_hours": {description: "Solar Panel Output (1kW panel)", kwh_per_unit: 1.0, unit: "hours"},
-            "steel_production": {description: "Steel Production", co2_per_unit: 1800.0, unit: "tons"},
-            "cement_production": {description: "Cement Production", co2_per_unit: 900.0, unit: "tons"}
+            "miles_driven": {description: "Miles Driven (avg car)", co2_per_unit: 0.393, unit: "miles", min_display: 0.1},
+            "flights_nyc_la": {description: "Flights NYC to LA", co2_per_unit: 900.0, unit: "flights", min_display: 0.001},
+            "flights_nyc_london": {description: "Flights NYC to London", co2_per_unit: 1200.0, unit: "flights", min_display: 0.001},
+            "household_electricity": {description: "Household Electricity (avg US home/year)", kwh_per_unit: 10500.0, unit: "years", min_display: 0.001},
+            "household_electricity_days": {description: "Household Electricity (avg US home/day)", kwh_per_unit: 28.8, unit: "days", min_display: 0.1},
+            "household_electricity_hours": {description: "Household Electricity (avg US home/hour)", kwh_per_unit: 1.2, unit: "hours", min_display: 0.1},
+            "smartphone_charges": {description: "Smartphone Charges", co2_per_unit: 0.008, unit: "charges", min_display: 0.0}, // Always show - meaningful for small values
+            "laptop_charges": {description: "Laptop Charges", co2_per_unit: 0.050, unit: "charges", min_display: 0.0}, // Always show - meaningful for small values
+            "tv_watching_hours": {description: "TV Watching (LED TV)", kwh_per_unit: 0.1, unit: "hours", min_display: 0.1},
+            "gaming_hours": {description: "Gaming (Gaming PC)", kwh_per_unit: 0.3, unit: "hours", min_display: 0.1},
+            "hamburgers": {description: "Cheeseburgers", co2_per_unit: 2.5, unit: "burgers", min_display: 0.05}, // Lower threshold - show more equivalencies for accountability
+            "coffee_cups": {description: "Coffee Cups", co2_per_unit: 0.2, unit: "cups", min_display: 0.0}, // Always show - more intuitive than fractional burgers
+            "beer_bottles": {description: "Beer Bottles", co2_per_unit: 0.3, unit: "bottles", min_display: 0.0}, // Always show - more intuitive than fractional burgers
+            "water_bottles": {description: "Plastic Water Bottles (500mL/16.9oz each)", liters_per_unit: 0.5, unit: "bottles", min_display: 0.1},
+            "shower_minutes": {description: "Shower Minutes (standard 2.5 gpm ≈ 9.5L/min)", liters_per_unit: 9.5, unit: "minutes", min_display: 0.0}, // Use standard (not efficient) rate for accountability
+            "showers": {description: "Showers (avg 8 minutes, 76L total)", liters_per_unit: 76.0, unit: "showers", min_display: 0.05}, // Standard 2.5 gpm showerhead
+            "bathtubs": {description: "Bathtubs", liters_per_unit: 150.0, unit: "baths", min_display: 0.1},
+            "urban_tree_sequestration": {description: "Urban Tree Sequestration", co2_per_unit: 60.0, unit: "years", min_display: 0.01},
+            "tree_planting": {description: "Tree Planting (mature tree)", co2_per_unit: 22.0, unit: "trees", min_display: 0.01},
+            "solar_panel_hours": {description: "Solar Panel Output (1kW panel)", kwh_per_unit: 1.0, unit: "hours", min_display: 0.1},
+            "steel_production": {description: "Steel Production", co2_per_unit: 1800.0, unit: "tons", min_display: 0.0001},
+            "cement_production": {description: "Cement Production", co2_per_unit: 900.0, unit: "tons", min_display: 0.0001}
         };
 
         // Medium-sized text sample
@@ -527,23 +538,46 @@ Understanding these impacts is crucial for making informed decisions about AI us
             const equivalencies = [];
             
             for (const [key, factor] of Object.entries(EQUIVALENCY_FACTORS)) {
+                const min_display = factor.min_display !== undefined ? factor.min_display : 0.0;
                 let value = null;
                 
                 if (factor.co2_per_unit) {
                     if (factor.co2_per_unit > 0) {
                         value = co2_kg / factor.co2_per_unit;
+                        // Only include if above minimum display threshold
+                        // Exception: Always show coffee cups, beer bottles, and device charges
+                        // as they provide meaningful context even for small values
+                        if (value < min_display && !["coffee_cups", "beer_bottles", "smartphone_charges", "laptop_charges"].includes(key)) {
+                            continue; // Skip this equivalency
+                        }
                     }
                 } else if (factor.kwh_per_unit) {
                     value = energy_kwh / factor.kwh_per_unit;
+                    if (value < min_display) {
+                        continue; // Skip this equivalency
+                    }
                 } else if (factor.liters_per_unit) {
                     value = water_liters / factor.liters_per_unit;
+                    // For water, show shower_minutes even if below threshold (more intuitive than 0.0645 showers)
+                    if (value < min_display && key !== "shower_minutes") {
+                        continue; // Skip this equivalency
+                    }
                 }
                 
                 if (value !== null && value !== Infinity && value > 0) {
+                    // Determine metric type for grouping
+                    let metricType = 'co2'; // default
+                    if (factor.kwh_per_unit) {
+                        metricType = 'energy';
+                    } else if (factor.liters_per_unit) {
+                        metricType = 'water';
+                    }
+                    
                     equivalencies.push({
                         description: factor.description,
                         value: value,
-                        unit: factor.unit
+                        unit: factor.unit,
+                        metricType: metricType
                     });
                 }
             }
@@ -560,28 +594,92 @@ Understanding these impacts is crucial for making informed decisions about AI us
                 return;
             }
 
-            equivalencies.forEach(eq => {
-                let formattedValue;
-                if (eq.value < 0.0001) {
-                    formattedValue = eq.value.toFixed(8); // Very small numbers: show up to 8 decimal places
-                } else if (eq.value < 0.001) {
-                    formattedValue = eq.value.toFixed(6); // Small numbers: show 6 decimal places
-                } else if (eq.value < 0.1) {
-                    formattedValue = eq.value.toFixed(4); // Medium-small: show 4 decimal places
-                } else if (eq.value < 1) {
-                    formattedValue = eq.value.toFixed(3); // Fractional: show 3 decimal places
-                } else {
-                    formattedValue = eq.value.toLocaleString('en-US', {maximumFractionDigits: 1}); // Large: show 1 decimal place
-                }
+            // Group equivalencies by metric type
+            const co2Equivalencies = [];
+            const energyEquivalencies = [];
+            const waterEquivalencies = [];
 
-                const div = document.createElement('div');
-                div.className = 'equivalency-item';
-                div.innerHTML = `
-                    <strong>${formattedValue} ${eq.unit}</strong>
-                    <div class="small text-muted">${eq.description}</div>
-                `;
-                container.appendChild(div);
+            equivalencies.forEach(eq => {
+                // Use metricType if available, otherwise determine from description
+                const metricType = eq.metricType || (() => {
+                    const desc = eq.description.toLowerCase();
+                    if (desc.includes('water') || desc.includes('shower') || desc.includes('bath') || desc.includes('bottle')) {
+                        return 'water';
+                    } else if (desc.includes('electricity') || desc.includes('kwh') || desc.includes('tv') || desc.includes('gaming') || desc.includes('solar')) {
+                        return 'energy';
+                    } else {
+                        return 'co2';
+                    }
+                })();
+                
+                if (metricType === 'water') {
+                    waterEquivalencies.push(eq);
+                } else if (metricType === 'energy') {
+                    energyEquivalencies.push(eq);
+                } else {
+                    co2Equivalencies.push(eq);
+                }
             });
+
+            // Display grouped equivalencies
+            if (co2Equivalencies.length > 0) {
+                const co2Group = document.createElement('div');
+                co2Group.className = 'mb-3';
+                co2Group.innerHTML = '<h6 class="text-primary mb-2">💨 Carbon Emissions (CO₂) Equivalents</h6>';
+                const co2List = document.createElement('div');
+                co2Equivalencies.forEach(eq => {
+                    co2List.appendChild(createEquivalencyElement(eq));
+                });
+                co2Group.appendChild(co2List);
+                container.appendChild(co2Group);
+            }
+
+            if (energyEquivalencies.length > 0) {
+                const energyGroup = document.createElement('div');
+                energyGroup.className = 'mb-3';
+                energyGroup.innerHTML = '<h6 class="text-warning mb-2">⚡ Energy Consumption Equivalents</h6>';
+                const energyList = document.createElement('div');
+                energyEquivalencies.forEach(eq => {
+                    energyList.appendChild(createEquivalencyElement(eq));
+                });
+                energyGroup.appendChild(energyList);
+                container.appendChild(energyGroup);
+            }
+
+            if (waterEquivalencies.length > 0) {
+                const waterGroup = document.createElement('div');
+                waterGroup.className = 'mb-3';
+                waterGroup.innerHTML = '<h6 class="text-info mb-2">💧 Water Usage Equivalents</h6>';
+                const waterList = document.createElement('div');
+                waterEquivalencies.forEach(eq => {
+                    waterList.appendChild(createEquivalencyElement(eq));
+                });
+                waterGroup.appendChild(waterList);
+                container.appendChild(waterGroup);
+            }
+        }
+
+        function createEquivalencyElement(eq) {
+            let formattedValue;
+            if (eq.value < 0.0001) {
+                formattedValue = eq.value.toFixed(8); // Very small numbers: show up to 8 decimal places
+            } else if (eq.value < 0.001) {
+                formattedValue = eq.value.toFixed(6); // Small numbers: show 6 decimal places
+            } else if (eq.value < 0.1) {
+                formattedValue = eq.value.toFixed(4); // Medium-small: show 4 decimal places
+            } else if (eq.value < 1) {
+                formattedValue = eq.value.toFixed(3); // Fractional: show 3 decimal places
+            } else {
+                formattedValue = eq.value.toLocaleString('en-US', {maximumFractionDigits: 1}); // Large: show 1 decimal place
+            }
+
+            const div = document.createElement('div');
+            div.className = 'equivalency-item';
+            div.innerHTML = `
+                <strong>${formattedValue} ${eq.unit}</strong>
+                <div class="small text-muted">${eq.description}</div>
+            `;
+            return div;
         }
 
         // Initialize model filtering

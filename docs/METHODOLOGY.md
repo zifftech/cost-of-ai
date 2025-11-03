@@ -173,9 +173,11 @@ Accounts for carbon credits and renewable energy purchases:
 - **Beer Bottles**: 0.3 kg CO₂ per bottle
 
 **Water**:
-- **Water Bottles**: 0.5 L per bottle
-- **Showers**: 60 L per shower (8 minutes)
+- **Water Bottles**: 0.5 L per bottle (500mL/16.9oz standard disposable bottle)
+- **Showers**: 76 L per shower (8 minutes at standard 2.5 gpm = 9.5 L/min)
 - **Bathtubs**: 150 L per bath
+
+**Note on Conservative Estimates**: For environmental accountability, we use standard (not efficient) rates for comparisons. This ensures we don't underestimate impacts by comparing to best-case scenarios.
 
 **Environmental**:
 - **Urban Tree Sequestration**: 60 kg CO₂ per year

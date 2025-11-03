@@ -47,12 +47,14 @@ EQUIVALENCY_FACTORS = {
     "smartphone_charges": {
         "description": "Smartphone Charges (~8g/charge)",
         "co2_per_unit": 0.008,  # kg CO2 per charge
-        "unit": "charges"
+        "unit": "charges",
+        "min_display": 0.0  # Always show - provides meaningful context even for small values
     },
     "laptop_charges": {
         "description": "Laptop Charges (~50g/charge)",
         "co2_per_unit": 0.050,  # kg CO2 per charge
-        "unit": "charges"
+        "unit": "charges",
+        "min_display": 0.0  # Always show - provides meaningful context even for small values
     },
     "tv_watching_hours": {
         "description": "TV Watching (LED TV, ~0.1 kWh/hour)",
@@ -66,32 +68,45 @@ EQUIVALENCY_FACTORS = {
     },
     
     # Food and lifestyle equivalencies
+    # Note: Hamburger value represents a restaurant cheeseburger with all ingredients (meat, bun, cheese, condiments, transport)
+    # Sources vary: EPA and research show 1-3 kg CO2, with 2.5 kg representing a full restaurant meal burger
     "hamburgers": {
-        "description": "Hamburgers (~2.5 kg CO2 per burger)",
-        "co2_per_unit": 2.5,  # kg CO2 per burger
-        "unit": "burgers"
+        "description": "Cheeseburgers (~2.5 kg CO2 per burger)",
+        "co2_per_unit": 2.5,  # kg CO2 per burger (restaurant cheeseburger, lifecycle - on higher end of typical 1-3 kg range)
+        "unit": "burgers",
+        "min_display": 0.05  # Lower threshold for accountability - show even small impacts
     },
     "coffee_cups": {
         "description": "Coffee Cups (~0.2 kg CO2 per cup)",
         "co2_per_unit": 0.2,  # kg CO2 per cup
-        "unit": "cups"
+        "unit": "cups",
+        "min_display": 0.0  # Always show - more intuitive than fractional burgers for small amounts
     },
     "beer_bottles": {
         "description": "Beer Bottles (~0.3 kg CO2 per bottle)",
         "co2_per_unit": 0.3,  # kg CO2 per bottle
-        "unit": "bottles"
+        "unit": "bottles",
+        "min_display": 0.0  # Always show - more intuitive than fractional burgers for small amounts
     },
     
     # Water equivalencies
     "water_bottles": {
-        "description": "Plastic Water Bottles (~0.5L each)",
-        "liters_per_unit": 0.5,  # liters per bottle
-        "unit": "bottles"
+        "description": "Plastic Water Bottles (500mL/16.9oz each)",
+        "liters_per_unit": 0.5,  # liters per bottle (standard 16.9oz/500mL bottle)
+        "unit": "bottles",
+        "min_display": 0.1
+    },
+    "shower_minutes": {
+        "description": "Shower Minutes (standard 2.5 gpm ≈ 9.5L/min)",
+        "liters_per_unit": 9.5,  # liters per minute (standard 2.5 gpm showerhead - not efficient, for accountability)
+        "unit": "minutes",
+        "min_display": 0.0  # Always show for accountability
     },
     "showers": {
-        "description": "Showers (avg 8 minutes, ~60L)",
-        "liters_per_unit": 60.0,  # liters per shower
-        "unit": "showers"
+        "description": "Showers (avg 8 minutes, 76L total)",
+        "liters_per_unit": 76.0,  # liters per shower (8 min × 9.5 L/min for standard showerhead)
+        "unit": "showers",
+        "min_display": 0.05  # Lower threshold for accountability
     },
     "bathtubs": {
         "description": "Bathtubs (avg 150L)",
@@ -143,18 +158,30 @@ class ReportGenerator:
         equivalencies = {}
         
         for key, factor in EQUIVALENCY_FACTORS.items():
+            min_display = factor.get("min_display", 0.0)  # Default: show all
+            
             if "co2_per_unit" in factor:
                 # CO2-based equivalencies (skip zero division)
                 if factor["co2_per_unit"] > 0:
-                    equivalencies[key] = total_impact.co2_kg / factor["co2_per_unit"]
+                    value = total_impact.co2_kg / factor["co2_per_unit"]
+                    # Only include if above minimum display threshold
+                    # Exception: Always show coffee cups, beer bottles, and smartphone/laptop charges 
+                    # as they provide meaningful context even for small values
+                    if value >= min_display or key in ["coffee_cups", "beer_bottles", "smartphone_charges", "laptop_charges"]:
+                        equivalencies[key] = value
                 else:
                     equivalencies[key] = float('inf')  # Infinite bike rides for zero emissions
             elif "kwh_per_unit" in factor:
                 # Energy-based equivalencies
-                equivalencies[key] = total_impact.kwh / factor["kwh_per_unit"]
+                value = total_impact.kwh / factor["kwh_per_unit"]
+                if value >= min_display:
+                    equivalencies[key] = value
             elif "liters_per_unit" in factor:
                 # Water-based equivalencies
-                equivalencies[key] = total_impact.water_liters / factor["liters_per_unit"]
+                value = total_impact.water_liters / factor["liters_per_unit"]
+                # For water, show shower_minutes even if below threshold (more intuitive than 0.0645 showers)
+                if value >= min_display or key == "shower_minutes":
+                    equivalencies[key] = value
         
         return equivalencies
 

@@ -1,11 +1,11 @@
 # Token Impact Estimation System
 
-Calculate environmental impact (kWh, CO₂, Water) of AI token usage using Playwright automation with tokenomy.ai.
+Calculate environmental impact (kWh, CO₂, Water) of AI token usage using peer-reviewed research methodologies.
 
 ## 🌱 Features
 
 - **Multi-Provider Support**: Parse token usage data from Anthropic, Gemini, and OpenAI
-- **Playwright Automation**: Automatically interact with tokenomy.ai energy usage estimator
+- **Local Calculations**: Direct calculations based on MIT and Google research (no external API dependencies)
 - **Intelligent Model Mapping**: Smart fallback strategy for model selection
 - **Comprehensive Reporting**: Generate HTML, JSON, and CSV reports with Chart.js visualizations
 - **CLI Interface**: Easy-to-use command-line interface
@@ -16,7 +16,7 @@ Calculate environmental impact (kWh, CO₂, Water) of AI token usage using Playw
 src/
 ├── core/                 # Core data models and aggregation logic
 ├── parsers/              # CSV parsers for different providers
-├── automation/           # Playwright automation engine
+├── automation/           # Local calculation engine (MIT/Google research-based)
 ├── reporting/            # Report generation with Chart.js
 └── cli/                  # Command-line interface
 
@@ -34,7 +34,6 @@ data/
 
 ```bash
 pip install -r requirements.txt
-playwright install chromium
 ```
 
 ### 2. Validate System
@@ -72,10 +71,11 @@ Check the `data/output/` directory for generated reports:
 
 ## 🎯 Model Mapping Strategy
 
-The system uses intelligent model mapping to match your data with available models on tokenomy.ai:
+The system uses intelligent model mapping to match your data with known model factors:
 
 1. **Substring Matching**: `claude-3-5-haiku-20241022` → `claude-3-haiku`
 2. **Generic Fallback**: `very-large` models → `generic-very_large`
+3. **Research-Based Factors**: Each recognized model has energy/water/CO₂ multipliers based on actual measurements
 
 ## 🔧 CLI Commands
 
@@ -99,14 +99,17 @@ python main.py report
 python main.py models
 ```
 
-## 🌐 Browser Automation
+## 🧮 Calculation Methodology
 
-The system uses Playwright to automate tokenomy.ai:
+The system uses local calculations based on peer-reviewed research:
 
-- **Headless Mode**: Runs browser in background (default)
-- **Dynamic UI**: Handles real-time result updates
-- **Error Handling**: Robust fallback strategies
-- **Model Selection**: Intelligent mapping to available options
+- **Energy**: MIT "From Words to Watts" paper (arXiv:2310.03003)
+- **Water**: Google's comprehensive AI environmental impact study (arXiv:2508.15734v1)
+- **Carbon Intensity**: U.S. Energy Information Administration (EIA) 2023 data
+- **Model Factors**: Devera.ai study + API pricing ratios
+- **No External Dependencies**: All calculations performed locally using research-backed factors
+
+See `docs/METHODOLOGY.md` for complete details.
 
 ## 📈 Report Features
 
@@ -131,13 +134,9 @@ The system uses Playwright to automate tokenomy.ai:
 
 ## 🛠️ Configuration
 
-### Environment Variables
-- `NOVA_ACT_API_KEY`: Not used (Playwright replaces Nova Act)
-
 ### CLI Options
 - `--input-dir`: Input directory (default: `data/input`)
 - `--output-dir`: Output directory (default: `data/output`)
-- `--headless/--no-headless`: Browser mode (default: headless)
 
 ## 🔍 Troubleshooting
 
@@ -147,17 +146,13 @@ The system uses Playwright to automate tokenomy.ai:
    - Ensure files are in `data/input/` subdirectories
    - Check file naming conventions
 
-2. **Playwright errors**
-   - Run `playwright install chromium`
-   - Check internet connection for tokenomy.ai access
-
-3. **Model mapping failures**
+2. **Model mapping failures**
    - System uses generic fallbacks automatically
    - Check console output for mapping decisions
 
-4. **Empty results**
-   - Verify tokenomy.ai is accessible
-   - Check browser automation logs
+3. **Calculation errors**
+   - Check that input CSV files are properly formatted
+   - Verify model names are recognized or will use generic fallbacks
 
 ## 📝 Development
 
