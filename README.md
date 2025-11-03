@@ -2,15 +2,7 @@
 
 Calculate environmental impact (kWh, CO₂, Water) of AI token usage using peer-reviewed research methodologies.
 
-## 🌱 Features
-
-- **Multi-Provider Support**: Parse token usage data from Anthropic, Gemini, and OpenAI
-- **Local Calculations**: Direct calculations based on MIT and Google research (no external API dependencies)
-- **Intelligent Model Mapping**: Smart fallback strategy for model selection
-- **Comprehensive Reporting**: Generate HTML, JSON, and CSV reports with Chart.js visualizations
-- **CLI Interface**: Easy-to-use command-line interface
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -18,7 +10,8 @@ src/
 ├── parsers/              # CSV parsers for different providers
 ├── automation/           # Local calculation engine (MIT/Google research-based)
 ├── reporting/            # Report generation with Chart.js
-└── cli/                  # Command-line interface
+├── cli/                  # Command-line interface
+└── ui/                   # Web interface calculator
 
 data/
 ├── input/               # CSV files from AI providers
@@ -28,34 +21,44 @@ data/
 └── output/              # Generated reports
 ```
 
-## 🚀 Quick Start
+## Getting Started
 
-### 1. Install Dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Validate System
+### Validate System
 
 ```bash
 python main.py validate
 ```
 
-### 3. Calculate Impact
+### Calculate Impact
 
 ```bash
 python main.py calculate
 ```
 
-### 4. View Reports
+### View Reports
 
-Check the `data/output/` directory for generated reports:
-- **HTML Report**: Interactive charts with Chart.js
-- **JSON Report**: Machine-readable data
-- **CSV Report**: Spreadsheet-compatible format
+Reports are generated in `data/output/`:
+- HTML: Charts and visualizations
+- JSON: Machine-readable data export
+- CSV: Spreadsheet format
 
-## 📊 Supported Data Formats
+### Web Interface
+
+A web-based calculator is available at `src/ui/index.html`. Open this file in a browser to:
+- Calculate impact for text input
+- Select provider, model, hardware, and region
+- View results with real-world equivalencies
+- Choose between location-based or market-based carbon accounting
+
+The interface uses the same calculation methodology as the CLI and runs entirely client-side.
+
+## Supported Data Formats
 
 ### Anthropic (Claude API)
 - Files: `claude_api_tokens_*.csv`
@@ -69,15 +72,15 @@ Check the `data/output/` directory for generated reports:
 - Files: `completions_usage_*.csv`
 - Columns: `date`, `model`, `prompt_tokens`, `completion_tokens`
 
-## 🎯 Model Mapping Strategy
+## Model Mapping
 
-The system uses intelligent model mapping to match your data with known model factors:
+The system maps CSV model names to known model factors:
 
 1. **Substring Matching**: `claude-3-5-haiku-20241022` → `claude-3-haiku`
 2. **Generic Fallback**: `very-large` models → `generic-very_large`
-3. **Research-Based Factors**: Each recognized model has energy/water/CO₂ multipliers based on actual measurements
+3. **Model Factors**: Recognized models have energy/water/CO₂ multipliers from research studies
 
-## 🔧 CLI Commands
+## CLI Commands
 
 ```bash
 # Validate system and data files
@@ -99,46 +102,40 @@ python main.py report
 python main.py models
 ```
 
-## 🧮 Calculation Methodology
+## Calculation Methodology
 
-The system uses local calculations based on peer-reviewed research:
+Calculations are performed locally using research-based factors:
 
 - **Energy**: MIT "From Words to Watts" paper (arXiv:2310.03003)
-- **Water**: Google's comprehensive AI environmental impact study (arXiv:2508.15734v1)
+- **Water**: Google AI environmental impact study (arXiv:2508.15734v1)
 - **Carbon Intensity**: U.S. Energy Information Administration (EIA) 2023 data
-- **Model Factors**: Devera.ai study + API pricing ratios
-- **No External Dependencies**: All calculations performed locally using research-backed factors
+- **Model Factors**: Devera.ai study and API pricing ratios
 
-See `docs/METHODOLOGY.md` for complete details.
+See `docs/METHODOLOGY.md` for methodology details.
 
-## 📈 Report Features
+## Report Outputs
 
 ### HTML Reports
-- Interactive Chart.js visualizations
-- Provider breakdown charts
-- Model-specific impact analysis
+- Chart.js visualizations
+- Provider and model breakdowns
 - Summary statistics
-- Detailed data tables
+- Data tables
 
 ### JSON Reports
 - Machine-readable format
-- Complete data export
-- Summary statistics
-- Structured impact metrics
+- Complete data export with summary statistics
 
 ### CSV Reports
-- Spreadsheet-compatible
-- Monthly aggregations
-- Provider breakdown
-- Impact metrics
+- Spreadsheet format
+- Monthly aggregations by provider
 
-## 🛠️ Configuration
+## Configuration
 
 ### CLI Options
 - `--input-dir`: Input directory (default: `data/input`)
 - `--output-dir`: Output directory (default: `data/output`)
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -154,25 +151,25 @@ See `docs/METHODOLOGY.md` for complete details.
    - Check that input CSV files are properly formatted
    - Verify model names are recognized or will use generic fallbacks
 
-## 📝 Development
+## Development
 
 ### Adding New Providers
 1. Create parser in `src/parsers/`
 2. Add to `ParserFactory`
-3. Update model mapping if needed
+3. Update model mapping as needed
 
 ### Customizing Reports
 1. Modify `ReportGenerator` class
 2. Add new chart types
 3. Update CLI options
 
-## 🤝 Contributing
+## Contributing
 
-1. Follow the development rules in `docs/DEVELOPMENT_RULES.md`
+1. Follow development rules in `docs/DEVELOPMENT_RULES.md`
 2. Use proper error handling
-3. Add comprehensive logging
+3. Include logging
 4. Test with real data files
 
-## 📄 License
+## License
 
 This project is for internal use at Tactech.
