@@ -190,12 +190,6 @@ See `docs/METHODOLOGY.md` for methodology details.
 2. Add new chart types
 3. Update CLI options
 
-## Contributing
-
-1. Follow development rules in `docs/DEVELOPMENT_RULES.md`
-2. Use proper error handling
-3. Include logging
-4. Test with real data files
 
 ## License
 
