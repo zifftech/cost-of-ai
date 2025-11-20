@@ -48,15 +48,39 @@ Reports are generated in `data/output/`:
 - JSON: Machine-readable data export
 - CSV: Spreadsheet format
 
-### Web Interface
+### Real-Time Calculator
 
-A web-based calculator is available at `src/ui/index.html`. Open this file in a browser to:
-- Calculate impact for text input
-- Select provider, model, hardware, and region
-- View results with real-world equivalencies
-- Choose between location-based or market-based carbon accounting
+A web-based real-time calculator is available for calculating environmental impact of text input without processing CSV files.
 
-The interface uses the same calculation methodology as the CLI and runs entirely client-side.
+**Location:** `src/ui/index.html`
+
+**What it does:**
+- Estimates token count from text input (approximately 4 characters per token)
+- Calculates energy consumption (kWh), carbon emissions (kg CO₂), and water usage (liters) in real-time
+- Uses the same calculation methodology as the CLI (MIT and Google research-based factors)
+- Displays results with real-world equivalencies grouped by metric type (CO₂, energy, water)
+- Runs entirely client-side - no server or API calls required
+
+**How to launch:**
+1. Open `src/ui/index.html` in any modern web browser
+2. No installation or server setup required - works as a standalone HTML file
+
+**Features:**
+- Text input with live token count estimation
+- Provider selection (OpenAI, Anthropic, Google Gemini)
+- Model selection (automatically filtered by provider)
+- Hardware selection (H100, A100, TPU, etc.)
+- Region selection for location-based carbon accounting
+- Carbon accounting method (location-based vs market-based)
+- Sample text buttons for quick testing
+- Real-world equivalencies (smartphone charges, coffee cups, shower minutes, etc.)
+
+**Usage:**
+1. Paste or type text into the input field
+2. Select your provider, model, hardware, and region
+3. Choose carbon accounting method
+4. Click "Calculate Environmental Impact"
+5. View results with energy, CO₂, and water metrics plus equivalencies
 
 ## LLM Provider Reports
 
