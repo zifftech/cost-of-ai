@@ -90,30 +90,58 @@ class LocalCalculator:
             "cpu_generic": {"energy": 0.6, "co2": 0.6, "water": 0.6},
         }
         
-        # Model-specific multipliers based on actual research data and measurements
-        # Research sources: Devera.ai study, Sam Altman (OpenAI), Google research paper
-        # Baseline: 1.0x ≈ 0.0000024 kWh/token (representative average for powerful 70B parameter model)
+        # Model-specific multipliers based on research + API pricing as an energy proxy.
+        # Baseline: 1.0x ≈ mid/large frontier-class inference.
+        # Updated Nov 2026 for ZD stack: Anthropic + Cursor (Claude-routed) primary, Gemini tertiary.
+        # Longer / more specific keys first so substring matching prefers them.
         self.MODEL_FACTORS = {
-            # OpenAI Models (based on actual measurements)
-            "gpt-4o": {"energy": 0.5, "co2": 0.5, "water": 0.5},  # 0.30 Wh/query (Devera.ai)
-            "gpt-4": {"energy": 1.1, "co2": 1.1, "water": 1.1},   # Estimated higher than GPT-4o
-            "gpt-4-turbo": {"energy": 0.8, "co2": 0.8, "water": 0.8},  # More efficient than GPT-4
-            "gpt-3.5-turbo": {"energy": 0.2, "co2": 0.2, "water": 0.2},  # Much more efficient
-            "gpt-4o-mini": {"energy": 0.1, "co2": 0.1, "water": 0.1},  # Very efficient
-            
-            # Anthropic Models (based on actual measurements from Devera.ai study)
-            "claude-3-opus": {"energy": 2.7, "co2": 2.7, "water": 2.7},  # 4.05 Wh/query (Devera.ai)
-            "claude-opus-4": {"energy": 2.7, "co2": 2.7, "water": 2.7},  # Latest flagship (similar to 3-opus)
-            "claude-sonnet-4": {"energy": 0.9, "co2": 0.9, "water": 0.9},  # Latest medium model
-            "claude-3-sonnet": {"energy": 0.8, "co2": 0.8, "water": 0.8},  # Legacy medium-large
-            "claude-3-haiku": {"energy": 0.2, "co2": 0.2, "water": 0.2},  # 0.22 Wh/query (Devera.ai)
-            
-            # Google Models (based on actual measurements)
+            # --- Anthropic (current, Nov 2026) ---
+            "claude-fable-5-1": {"energy": 3.5, "co2": 3.5, "water": 3.5},  # highest-tier reasoning
+            "claude-opus-5-5": {"energy": 2.7, "co2": 2.7, "water": 2.7},    # flagship agentic
+            "claude-sonnet-5-5": {"energy": 1.0, "co2": 1.0, "water": 1.0},  # default Cursor/Claude workhorse
+            "claude-haiku-5-5": {"energy": 0.15, "co2": 0.15, "water": 0.15},
+
+            # Anthropic 4.x / 4.5 / 4.6 (still appear in usage CSVs)
+            "claude-opus-4-6": {"energy": 2.7, "co2": 2.7, "water": 2.7},
+            "claude-sonnet-4-6": {"energy": 0.95, "co2": 0.95, "water": 0.95},
+            "claude-opus-4-5": {"energy": 2.7, "co2": 2.7, "water": 2.7},
+            "claude-sonnet-4-5": {"energy": 0.9, "co2": 0.9, "water": 0.9},
+            "claude-haiku-4-5": {"energy": 0.2, "co2": 0.2, "water": 0.2},
+            "claude-opus-4": {"energy": 2.7, "co2": 2.7, "water": 2.7},
+            "claude-sonnet-4": {"energy": 0.9, "co2": 0.9, "water": 0.9},
+
+            # Anthropic 3.x (Devera.ai measurements; legacy CSV mapping)
+            "claude-3-opus": {"energy": 2.7, "co2": 2.7, "water": 2.7},   # 4.05 Wh/query
+            "claude-3-sonnet": {"energy": 0.8, "co2": 0.8, "water": 0.8},
+            "claude-3-haiku": {"energy": 0.2, "co2": 0.2, "water": 0.2},  # 0.22 Wh/query
+
+            # --- Google Gemini (current 3.x + retained 2.5) ---
+            "gemini-3.1-pro-preview": {"energy": 0.6, "co2": 0.6, "water": 0.6},
+            "gemini-3.1-pro": {"energy": 0.6, "co2": 0.6, "water": 0.6},
+            "gemini-3.8-flash": {"energy": 0.3, "co2": 0.3, "water": 0.3},
+            "gemini-3.6-flash": {"energy": 0.3, "co2": 0.3, "water": 0.3},
+            "gemini-3-flash-preview": {"energy": 0.3, "co2": 0.3, "water": 0.3},
+            "gemini-3-flash": {"energy": 0.3, "co2": 0.3, "water": 0.3},
+            "gemini-3.5-flash-lite": {"energy": 0.15, "co2": 0.15, "water": 0.15},
+            "gemini-3.1-flash-lite": {"energy": 0.15, "co2": 0.15, "water": 0.15},
             "gemini-2.5-pro": {"energy": 0.5, "co2": 0.5, "water": 0.5},  # 0.24 Wh/query (Devera.ai)
-            "gemini-1.5-pro": {"energy": 0.5, "co2": 0.5, "water": 0.5},  # Similar efficiency to 2.5
-            "gemini-1.0-pro": {"energy": 0.4, "co2": 0.4, "water": 0.4},  # Efficient
-            "gemini-flash": {"energy": 0.2, "co2": 0.2, "water": 0.2},  # Very efficient
-            
+            "gemini-2.5-flash-lite": {"energy": 0.15, "co2": 0.15, "water": 0.15},
+            "gemini-2.5-flash": {"energy": 0.2, "co2": 0.2, "water": 0.2},
+            "gemini-1.5-pro": {"energy": 0.5, "co2": 0.5, "water": 0.5},
+            "gemini-1.5-flash": {"energy": 0.2, "co2": 0.2, "water": 0.2},
+            "gemini-1.0-pro": {"energy": 0.4, "co2": 0.4, "water": 0.4},
+            "gemini-flash": {"energy": 0.2, "co2": 0.2, "water": 0.2},
+
+            # --- OpenAI (secondary; pricing-proxy estimates) ---
+            "gpt-6.1": {"energy": 1.2, "co2": 1.2, "water": 1.2},
+            "gpt-6": {"energy": 1.1, "co2": 1.1, "water": 1.1},
+            "gpt-5": {"energy": 1.0, "co2": 1.0, "water": 1.0},
+            "gpt-4o": {"energy": 0.5, "co2": 0.5, "water": 0.5},  # 0.30 Wh/query (Devera.ai)
+            "gpt-4-turbo": {"energy": 0.8, "co2": 0.8, "water": 0.8},
+            "gpt-4": {"energy": 1.1, "co2": 1.1, "water": 1.1},
+            "gpt-3.5-turbo": {"energy": 0.2, "co2": 0.2, "water": 0.2},
+            "gpt-4o-mini": {"energy": 0.1, "co2": 0.1, "water": 0.1},
+
             # Generic size-based fallbacks
             "generic-small": {"energy": 0.3, "co2": 0.3, "water": 0.3},
             "generic-medium": {"energy": 0.6, "co2": 0.6, "water": 0.6},
@@ -123,30 +151,33 @@ class LocalCalculator:
     
     def get_model_factors(self, model_name: str) -> Dict[str, float]:
         """Get calculation factors for a specific model"""
-        model_lower = model_name.lower()
+        model_lower = model_name.lower().strip()
+        # Strip dated Anthropic suffixes: claude-sonnet-4-5-20250929 → claude-sonnet-4-5
+        if model_lower.startswith("claude-") and len(model_lower) > 8 and model_lower[-8:].isdigit():
+            model_lower = model_lower.rsplit("-", 1)[0]
         
         # Direct match first
         if model_lower in self.MODEL_FACTORS:
             return self.MODEL_FACTORS[model_lower]
         
-        # Substring matching for model variants
-        for known_model, factors in self.MODEL_FACTORS.items():
+        # Substring matching for model variants (longest keys first)
+        for known_model, factors in sorted(
+            self.MODEL_FACTORS.items(), key=lambda item: len(item[0]), reverse=True
+        ):
+            if known_model.startswith("generic-"):
+                continue
             if known_model in model_lower or model_lower in known_model:
                 return factors
         
         # Size-based fallback logic (aligned with dictionary factors)
-        # Flagship/Expert-Level: Most complex, highest capability models
-        if any(keyword in model_lower for keyword in ['opus', 'gpt-4', 'gpt-5', 'gemini-2.5']):
+        if any(keyword in model_lower for keyword in ["fable", "opus", "gpt-6", "gpt-5"]):
             return self.MODEL_FACTORS["generic-very_large"]
-        # Professional/Advanced: High capability, efficient models  
-        elif any(keyword in model_lower for keyword in ['sonnet', 'gpt-4-turbo', 'gemini-1.5', 'gpt-4o']):
+        elif any(keyword in model_lower for keyword in ["sonnet", "gpt-4", "gemini-3.1-pro", "gemini-2.5-pro", "gemini-1.5-pro"]):
             return self.MODEL_FACTORS["generic-large"]
-        # Standard/General: Balanced capability and efficiency
-        elif any(keyword in model_lower for keyword in ['haiku', 'gpt-3.5', 'gemini-1.0', 'gemini-flash']):
-            return self.MODEL_FACTORS["generic-medium"]
-        # Lightweight/Efficient: Optimized for speed and efficiency
-        elif any(keyword in model_lower for keyword in ['mini', 'nano', 'small']):
+        elif any(keyword in model_lower for keyword in ["haiku", "flash-lite", "mini", "nano", "lite"]):
             return self.MODEL_FACTORS["generic-small"]
+        elif any(keyword in model_lower for keyword in ["flash", "gpt-3.5", "gemini"]):
+            return self.MODEL_FACTORS["generic-medium"]
         
         # Default to medium
         return self.MODEL_FACTORS["generic-medium"]
@@ -371,19 +402,26 @@ class LocalCalculator:
         Validate model factors against API pricing ratios (Phase 3 recommendation)
         API cost differences are strong proxy for energy efficiency
         """
-        # Approximate API pricing ratios (as of 2025) - updated based on research
+        # Approximate API pricing ratios (as of Nov 2026) — energy-proxy sanity check
         pricing_ratios = {
-            "gpt-4": 1.0,           # Baseline pricing
-            "gpt-4o": 0.5,          # ~50% of GPT-4 pricing
-            "gpt-4-turbo": 0.7,     # ~70% of GPT-4 pricing  
-            "gpt-3.5-turbo": 0.1,   # ~10% of GPT-4 pricing
-            "gpt-4o-mini": 0.05,    # ~5% of GPT-4 pricing
-            "claude-3-opus": 1.5,   # ~150% of GPT-4 pricing (high energy cost)
-            "claude-opus-4": 1.5,   # ~150% of GPT-4 pricing (similar to 3-opus)
-            "claude-sonnet-4": 0.6, # ~60% of GPT-4 pricing
-            "claude-3-haiku": 0.2,  # ~20% of GPT-4 pricing
-            "gemini-2.5-pro": 0.4,  # ~40% of GPT-4 pricing
-            "gemini-1.5-pro": 0.4,  # ~40% of GPT-4 pricing
+            "gpt-4": 1.0,
+            "gpt-4o": 0.5,
+            "gpt-4-turbo": 0.7,
+            "gpt-3.5-turbo": 0.1,
+            "gpt-4o-mini": 0.05,
+            "gpt-6": 1.1,
+            "claude-fable-5-1": 2.0,
+            "claude-opus-5-5": 1.5,
+            "claude-sonnet-5-5": 0.7,
+            "claude-haiku-5-5": 0.1,
+            "claude-3-opus": 1.5,
+            "claude-opus-4": 1.5,
+            "claude-sonnet-4": 0.6,
+            "claude-3-haiku": 0.2,
+            "gemini-3.1-pro": 0.5,
+            "gemini-3.8-flash": 0.25,
+            "gemini-2.5-pro": 0.4,
+            "gemini-1.5-pro": 0.4,
         }
         
         validation_results = {}

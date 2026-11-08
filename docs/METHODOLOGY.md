@@ -102,27 +102,40 @@ Accounts for carbon credits and renewable energy purchases:
 - **Methodology**: Actual energy consumption measurements per query
 - **Validation**: Cross-referenced with API pricing ratios (cost differences correlate with energy efficiency)
 
-**Model Factors**:
+**Model Factors** (updated Nov 2026 for ZD usage: Anthropic + Cursor primary, Gemini tertiary):
 
-#### OpenAI Models
-- **GPT-4o**: 0.5x (0.30 Wh/query - Devera.ai measurement)
-- **GPT-4**: 1.1x (estimated higher than GPT-4o)
-- **GPT-4-Turbo**: 0.8x (more efficient than GPT-4)
-- **GPT-3.5-Turbo**: 0.2x (much more efficient)
-- **GPT-4o-Mini**: 0.1x (very efficient)
+Cursor is not a separate inference provider — score Cursor traffic as the underlying Claude/OpenAI model it routes to (usually Claude Sonnet / Opus).
 
-#### Anthropic Models
+#### Anthropic Models (current)
+- **Claude-Fable-5.1**: 3.5x (highest-tier reasoning; pricing-proxy estimate)
+- **Claude-Opus-5.5**: 2.7x (flagship agentic; aligned with Opus-class Devera.ai baseline)
+- **Claude-Sonnet-5.5**: 1.0x (default workhorse for Cursor / Claude API)
+- **Claude-Haiku-5.5**: 0.15x (high-volume / latency-sensitive)
+
+#### Anthropic Models (legacy / CSV mapping)
+- **Claude-Opus-4 / 4.5 / 4.6**: 2.7x
+- **Claude-Sonnet-4 / 4.5 / 4.6**: 0.9–0.95x
+- **Claude-Haiku-4.5**: 0.2x
 - **Claude-3-Opus**: 2.7x (4.05 Wh/query - Devera.ai measurement)
-- **Claude-Opus-4**: 2.7x (latest flagship, similar to 3-Opus)
-- **Claude-Sonnet-4**: 0.9x (latest medium model)
-- **Claude-3-Sonnet**: 0.8x (legacy medium-large)
+- **Claude-3-Sonnet**: 0.8x
 - **Claude-3-Haiku**: 0.2x (0.22 Wh/query - Devera.ai measurement)
 
-#### Google Models
+#### Google Models (current)
+- **Gemini-3.1-Pro**: 0.6x
+- **Gemini-3.8-Flash / 3.6-Flash**: 0.3x
+- **Gemini-3.5-Flash-Lite**: 0.15x
 - **Gemini-2.5-Pro**: 0.5x (0.24 Wh/query - Devera.ai measurement)
-- **Gemini-1.5-Pro**: 0.5x (similar efficiency to 2.5)
-- **Gemini-1.0-Pro**: 0.4x (efficient)
-- **Gemini-Flash**: 0.2x (very efficient)
+- **Gemini-2.5-Flash**: 0.2x
+- **Gemini-2.5-Flash-Lite**: 0.15x
+
+#### OpenAI Models
+- **GPT-6 / 6.1**: 1.1–1.2x (pricing-proxy estimate)
+- **GPT-5**: 1.0x
+- **GPT-4o**: 0.5x (0.30 Wh/query - Devera.ai measurement)
+- **GPT-4**: 1.1x
+- **GPT-4-Turbo**: 0.8x
+- **GPT-3.5-Turbo**: 0.2x
+- **GPT-4o-Mini**: 0.1x
 
 ## Hardware-Specific Factors
 

@@ -125,11 +125,14 @@ A web-based real-time calculator is available for calculating environmental impa
 
 ## Model Mapping
 
-The system maps CSV model names to known model factors:
+The system maps CSV model names to known model factors (updated Nov 2026):
 
-1. **Substring Matching**: `claude-3-5-haiku-20241022` → `claude-3-haiku`
-2. **Generic Fallback**: `very-large` models → `generic-very_large`
-3. **Model Factors**: Recognized models have energy/water/CO₂ multipliers from research studies
+1. **Dated Anthropic IDs**: `claude-sonnet-4-5-20250929` → `claude-sonnet-4-5`
+2. **Substring Matching** (longest key wins): `claude-sonnet-5-5-…` → `claude-sonnet-5-5`
+3. **Generic Fallback**: unmatched large/flagship → `generic-very_large`, etc.
+4. **Model Factors**: current Claude 5.5 / Gemini 3.x / GPT-6 families plus legacy 3.x–4.x for historical CSVs
+
+**ZD usage note:** Cursor is scored as the underlying Anthropic (or OpenAI) model it routes to — typically Claude Sonnet 5.5 / Opus 5.5.
 
 ## CLI Commands
 
